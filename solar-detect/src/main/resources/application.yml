@@ -16,3 +16,9 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+
+jwt:
+  secret: mySecretKey12345678901234567890123456789012345678901234567890
+  expiration: 10000 # 24 horas em millisegundos
+  header: Authorization
+  prefix: "Bearer "
