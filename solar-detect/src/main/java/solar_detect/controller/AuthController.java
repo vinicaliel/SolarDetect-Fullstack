@@ -47,15 +47,9 @@ private final AuthService authService;
 
      @PostMapping("/register/company")
      public ResponseEntity<AuthResponse> RegisterCompany(@Valid @RequestBody RegisterRequest request){
-        request.setUserType(solar_detect.models.User.UserType.STUDENT);
+        request.setUserType(solar_detect.models.User.UserType.COMPANY);
         return register(request);
 
      }
-
-
-
-
-
-
 
 }

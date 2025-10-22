@@ -22,3 +22,10 @@ jwt:
   expiration: 10000 # 24 horas em millisegundos
   header: Authorization
   prefix: "Bearer "
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
