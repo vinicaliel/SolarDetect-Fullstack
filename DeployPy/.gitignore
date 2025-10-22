@@ -1,0 +1,29 @@
+# Directories to ignore
+/resources
+/mlartifacts
+/__pycache__
+/.venv
+
+# Python cache files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.so
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
