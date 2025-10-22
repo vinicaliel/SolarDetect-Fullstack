@@ -31,3 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
+solar-detect\src\main\resources\application.yml
