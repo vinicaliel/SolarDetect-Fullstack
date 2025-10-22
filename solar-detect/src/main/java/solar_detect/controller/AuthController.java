@@ -38,6 +38,23 @@ private final AuthService authService;
         return ResponseEntity.ok(response);
      }
 
+     @PostMapping("/register/student")
+     public ResponseEntity<AuthResponse> RegisterStudent(@Valid @RequestBody RegisterRequest request){
+        request.setUserType(solar_detect.models.User.UserType.STUDENT);
+        return register(request);
+
+     }
+
+     @PostMapping("/register/company")
+     public ResponseEntity<AuthResponse> RegisterCompany(@Valid @RequestBody RegisterRequest request){
+        request.setUserType(solar_detect.models.User.UserType.STUDENT);
+        return register(request);
+
+     }
+
+
+
+
 
 
 
