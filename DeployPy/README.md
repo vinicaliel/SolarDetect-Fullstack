@@ -34,8 +34,8 @@ Instalar somente o MLflow (opcional, caso queira instalar separadamente):
 pip install mlflow
 ```
 ## Estrutura do projeto
-- `pythonapi.py`: API FastAPI e carregamento do modelo (MLflow, local ou dummy)
-- `plot.py`: utilidades (download do tile, pré/pós-processamento, overlay)
+- `afastApi.py`: API FastAPI e carregamento do modelo (MLflow, local ou dummy)
+- `Deploy.py`: utilidades (download do tile, pré/pós-processamento, overlay)
 - `mlruns/`: storage local padrão do MLflow quando não há servidor
 
 Após iniciar, acesse `http://127.0.0.1:5000` no navegador.
