@@ -16,15 +16,24 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import jakarta.validation.Valid;
 import io.jsonwebtoken.io.IOException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import solar_detect.dto.DetectRequest;
 
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
+@Tag(name = "Prediction", description = "Solar detection prediction endpoints")
 public class PredictController  {
 
     @GetMapping("/predict")
-    public ResponseEntity<byte[]> predict(
+    @Operation(summary = "Get solar prediction", description = "Get solar panel detection prediction for given coordinates")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved prediction image", 
+                content = @Content(mediaType = "image/png"))
+    public ResponseEntity<byte[]> predictGet(
         @RequestParam Float lat,
         @RequestParam Float lon
     ) throws IOException {
@@ -41,7 +50,10 @@ public class PredictController  {
         return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
     }
 
-    @PostMapping("/predict")
+    @PostMapping("/predict/detect")
+    @Operation(summary = "Post solar prediction", description = "Get solar panel detection prediction via POST request")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved prediction image", 
+                content = @Content(mediaType = "image/png"))
     public ResponseEntity<byte[]> predictPost(@Valid @RequestBody DetectRequest request) {
         Float lat = request.getLat();
         Float lon = request.getLon();
