@@ -39,7 +39,7 @@ public class PredictController  {
     ) throws IOException {
 
         String url = String.format(Locale.US,
-    "http://localhost:8000/predict?lat=%.6f&lon=%.6f", lat, lon);
+    "http://fastapi:8000/predict?lat=%.6f&lon=%.6f", lat, lon);
 
         RestTemplate restTemplate = new RestTemplate();
         byte[] imageBytes = restTemplate.getForObject(url, byte[].class);
@@ -59,7 +59,7 @@ public class PredictController  {
         Float lon = request.getLon();
     
         // Chama o backend Python FastAPI via POST com JSON body
-        String pythonUrl = "http://localhost:8000/predict";
+        String pythonUrl = "http://fastapi:8000/predict";
     
         RestTemplate restTemplate = new RestTemplate();
         byte[] response = restTemplate.postForObject(pythonUrl, request, byte[].class);

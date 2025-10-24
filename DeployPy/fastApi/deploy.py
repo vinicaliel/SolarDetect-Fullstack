@@ -20,6 +20,7 @@ import time
 import sys
 import os
 
+
 # Fix Unicode encoding issues on Windows
 if sys.platform.startswith('win'):
     import codecs
@@ -142,20 +143,25 @@ class UNetVGG16(nn.Module):
         return self.sigmoid(out)
 
 # --- 2️ Carregar pesos ---
+print("iniciando o modelo")
 model = UNetVGG16(pretrained=True)
-state = torch.load(r"resources\vgg16_LR.pth", map_location="cpu")
+state = torch.load(r"./vgg16_LR.pth", map_location="cpu")
+print("modelo carregado")
 model.load_state_dict(state)
 model.eval()
+print("modelo carregado2")
 
+print("iniciando o mlflow")
 # --- 3️ Registrar no MLflow ---
-mlflow.set_tracking_uri("http://127.0.0.1:5000")
+mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "http://mlflow:5000"))
+print("mlflow setado")
 mlflow.set_experiment("Segmentação de Imagens - U-Net VGG16")
-
+print("experiment setado")
 with mlflow.start_run(run_name="Segmentação de Imagens - U-Net VGG16"):
     mlflow.pytorch.log_model(
         model,
         "model",
         registered_model_name="SolarDetect"
     )
-
+print("modelo registrado")
 print(" Modelo UNet-VGG16 registrado com sucesso no MLflow!")
