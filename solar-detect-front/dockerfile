@@ -1,0 +1,38 @@
+# Etapa 1: build da aplicação
+FROM node:20-alpine AS builder
+
+# Define o diretório de trabalho
+WORKDIR /app
+
+# Copia os arquivos de dependências
+COPY package*.json ./
+
+# Instala dependências (sem dev, se quiser imagem menor)
+RUN npm install
+
+# Copia o restante dos arquivos do projeto
+COPY . .
+
+# Gera o build da aplicação Next.js
+RUN npm run build
+
+# Etapa 2: imagem final de produção
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+# Copia apenas os arquivos necessários do build
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+
+# Instala apenas dependências de produção
+RUN npm install --omit=dev
+
+# Expõe a porta padrão do Next.js
+EXPOSE 3000
+
+# Comando para iniciar o servidor Next.js
+CMD ["npm", "start"]

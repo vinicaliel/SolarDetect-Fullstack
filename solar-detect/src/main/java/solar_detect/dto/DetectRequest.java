@@ -5,9 +5,9 @@ import lombok.Data;
 
 @Data
 public class DetectRequest {
-    @NotNull(message = "lat é obrigatório")
+    @NotNull(message = "lat é obrigatória")
     private Float lat;
 
-    @NotNull(message = "lon é obrigatório")
+    @NotNull(message = "lon é obrigatória")
     private Float lon;
 }
