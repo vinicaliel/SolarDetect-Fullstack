@@ -1,11 +1,9 @@
 .:
-components/
 components.json
 dockerfile
 eslint.config.mjs
 estrutura.txt
 next.config.ts
-next-env.d.ts
 node_modules/
 package.json
 package-lock.json
@@ -14,9 +12,6 @@ public/
 README.md
 src/
 tsconfig.json
-
-./components:
-
 
 
 ./public:

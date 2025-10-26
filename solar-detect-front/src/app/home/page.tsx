@@ -1,20 +1,40 @@
-//landing page
-import { Button } from "@/components/Button";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
 import { CardFeature } from "@/components/CardFeature";
-import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { Zap, Shield, TrendingUp } from "lucide-react";
+import { Zap, Shield, TrendingUp, BarChart2 } from "lucide-react";
+import { Button } from "@/components/Button";
 
-export default function LandingPage() {
+export default function HomePage() {
+  const router = useRouter();
+
   return (
-    <main className="flex flex-col min-h-screen bg-white text-gray-800">
+    <main className="flex flex-col min-h-screen bg-gray-50 text-gray-800">
       <Navbar />
+
+      {/* Hero da landing page */}
       <HeroSection />
 
-      <section className="py-16 px-6 grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+      {/* Botões de ação */}
+      <div className="flex justify-center gap-4 mt-8">
+        <Button variant="default" size="lg" onClick={() => router.push("/login")}>
+          Login
+        </Button>
+        <Button variant="outline" size="lg" onClick={() => router.push("/register")}>
+          Cadastro
+        </Button>
+      </div>
+
+      {/* Cards de funcionalidades */}
+      <section
+        id="cards"
+        className="py-16 px-6 grid sm:grid-cols-2 md:grid-cols-4 gap-6 max-w-7xl mx-auto"
+      >
         <CardFeature
-          icon={<Zap className="text-blue-600" size={36} />}
+          icon={<Zap className="text-yellow-500" size={36} />}
           title="Monitoramento em Tempo Real"
           description="Acompanhe geração e consumo de energia solar em tempo real, com alertas automáticos."
         />
@@ -25,8 +45,13 @@ export default function LandingPage() {
         />
         <CardFeature
           icon={<TrendingUp className="text-blue-500" size={36} />}
-          title="Análises Inteligentes"
-          description="Relatórios automáticos e insights sobre eficiência e economia energética."
+          title="Detecção Inteligente"
+          description="IA que identifica irregularidades no uso de energia solar."
+        />
+        <CardFeature
+          icon={<BarChart2 className="text-purple-600" size={36} />}
+          title="Relatórios Detalhados"
+          description="Visualize dados consolidados e históricos para tomadas de decisão estratégicas."
         />
       </section>
 
@@ -34,4 +59,3 @@ export default function LandingPage() {
     </main>
   );
 }
-
