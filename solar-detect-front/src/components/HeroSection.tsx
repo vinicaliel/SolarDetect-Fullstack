@@ -27,8 +27,8 @@ export function HeroSection() {
           Detecte placas solares com inteligência artificial
         </h1>
         <p className="text-lg md:text-2xl mb-8 animate-fadeInUp delay-200">
-          Auxiliando órgãos como Neoenergia a monitorar a energia solar de forma
-          segura e eficiente.
+          Auxiliando companhias de energia a monitorar a energia solar de forma
+          fácil e eficiente.
         </p>
         <div className="flex justify-center gap-4 animate-fadeInUp delay-400">
           <Button size="lg" className="transition-transform hover:scale-105">
