@@ -120,3 +120,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.hero-gradient {
+  background: linear-gradient(90deg, #0d8b3a 0%, #0f5f94 40%, #1832ff 50%, #0f5f94 60%, #0d8b3a 100%);
+}
