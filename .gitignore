@@ -1,3 +1,4 @@
 .env
 docker-compose.yml
 solar-detect/src/main/resources/application.yml
+.env
