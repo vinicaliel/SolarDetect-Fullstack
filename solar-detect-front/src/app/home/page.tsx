@@ -18,16 +18,6 @@ export default function HomePage() {
       {/* Hero da landing page */}
       <HeroSection />
 
-      {/* Botões de ação */}
-      <div className="flex justify-center gap-4 mt-8">
-        <Button variant="default" size="lg" onClick={() => router.push("/login")}>
-          Login
-        </Button>
-        <Button variant="outline" size="lg" onClick={() => router.push("/register")}>
-          Cadastro
-        </Button>
-      </div>
-
       {/* Cards de funcionalidades */}
       <section
         id="cards"

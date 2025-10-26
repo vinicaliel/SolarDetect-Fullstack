@@ -1,6 +1,11 @@
+"use client";
+
 import { Button } from "./Button";
+import { useRouter } from "next/navigation";
 
 export function Navbar() {
+  const router = useRouter();
+
   return (
     <nav className="w-full bg-white/90 backdrop-blur-md shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
@@ -10,8 +15,14 @@ export function Navbar() {
           <a href="#features" className="hover:text-green-700 transition-colors duration-300">Como Funciona</a>
           <a href="#cards" className="hover:text-green-700 transition-colors duration-300">Funcionalidades</a>
           <a href="#contact" className="hover:text-green-700 transition-colors duration-300">Contato</a>
-          <Button variant="outline" size="sm">Login</Button>
-          <Button size="sm">Cadastro</Button>
+
+          {/* Botões de Login e Cadastro */}
+          <Button variant="outline" size="sm" onClick={() => router.push("/login")}>
+            Login
+          </Button>
+          <Button size="sm" onClick={() => router.push("/register")}>
+            Cadastro
+          </Button>
         </div>
       </div>
     </nav>
