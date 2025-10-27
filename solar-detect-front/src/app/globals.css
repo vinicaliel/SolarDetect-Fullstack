@@ -121,6 +121,25 @@
   }
 }
 
-.hero-gradient {
-  background: linear-gradient(90deg, #0d8b3a 0%, #0f5f94 40%, #1832ff 50%, #0f5f94 60%, #0d8b3a 100%);
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+.animate-fadeInUp.delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animate-fadeInUp.delay-400 {
+  animation-delay: 0.4s;
 }
