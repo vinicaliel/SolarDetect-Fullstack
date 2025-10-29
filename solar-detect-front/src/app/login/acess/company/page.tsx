@@ -17,9 +17,43 @@ export default function CompanyLoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: LoginForm) => {
-    console.log("Login Company:", data);
-    // Aqui você chamaria POST /login com { email, password, userType: 'COMPANY' }
+  async function onSubmit(data: LoginForm) {
+  console.log("Login Company:", data);
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+  const url = `${API_BASE}/api/auth/login`;
+
+    try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers:{
+        "Content-Type": "application/json",
+      },
+      
+      body: JSON.stringify({ ...data, userType: 'COMPANY' }),
+      
+    })
+
+
+    if(!res.ok){
+      let errText = `Erro HTTP ${res.status}`;
+      try{
+        const errJson = await res.json();
+        errText += ` - ${JSON.stringify(errJson)}`;
+      } catch(_){
+        // não JSON no corpo
+      }
+      throw new Error(errText);
+    }
+
+    const userData = await res.json();
+    if(userData.userType !== 'COMPANY'){
+      throw new Error("Tipo de usuário inválido para esta página de login.");
+    }
+
+}     catch (error) {
+      console.error("Erro ao fazer login:", error);
+    }
+
   };
 
   return (

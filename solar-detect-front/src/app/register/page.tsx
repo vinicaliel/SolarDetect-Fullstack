@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/Button";
-import InputMask from "react-input-mask";
+import { IMaskInput } from "react-imask";
 import { isValidCPF, isValidCNPJ, isValidPhone } from "@/utils/validators";
 
 // Schemas separados para cada tipo de usuário
@@ -82,6 +82,7 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<StudentForm | CompanyForm>({
     resolver: zodResolver(userType === "STUDENT" ? studentSchema : companySchema),
@@ -204,10 +205,18 @@ export default function RegisterPage() {
             <label className="block text-gray-700">
               {userType === "STUDENT" ? "CPF" : "CNPJ"}
             </label>
-            <InputMask
-              mask={userType === "STUDENT" ? "999.999.999-99" : "99.999.999/9999-99"}
-              {...register("documentNumber")}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-700"
+            <Controller
+              name="documentNumber"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <IMaskInput
+                  mask={userType === "STUDENT" ? "000.000.000-00" : "00.000.000/0000-00"}
+                  value={value || ""}
+                  onAccept={(value) => onChange(value)}
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-700"
+                  placeholder={userType === "STUDENT" ? "000.000.000-00" : "00.000.000/0000-00"}
+                />
+              )}
             />
             {errors.documentNumber && (
               <p className="text-red-500 text-sm">{errors.documentNumber.message}</p>
@@ -217,10 +226,18 @@ export default function RegisterPage() {
           {/* Telefone */}
           <div>
             <label className="block text-gray-700">Telefone (opcional)</label>
-            <InputMask
-              mask="(99)99999-9999"
-              {...register("phone")}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-700"
+            <Controller
+              name="phone"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <IMaskInput
+                  mask="(00)00000-0000"
+                  value={value || ""}
+                  onAccept={(value) => onChange(value)}
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-700"
+                  placeholder="(00)00000-0000"
+                />
+              )}
             />
           </div>
 
