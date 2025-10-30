@@ -1,5 +1,6 @@
 "use client";
 import { useState, FormEvent, useRef, useEffect } from "react";
+import { authService } from "@/services/authService";
 
 export default function SolarDetect() {
   const [lat, setLat] = useState<string>("");
@@ -31,6 +32,34 @@ export default function SolarDetect() {
     return n.toFixed(6); // 6 casas decimais
   }
 
+  // Função para renovar o token
+  async function refreshToken() {
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+    const userType = localStorage.getItem('userType');
+    const email = localStorage.getItem('email');
+    const password = localStorage.getItem('password'); // Ideal seria ter um refresh token
+
+    if (!email || !password || !userType) {
+      throw new Error('Dados de autenticação não encontrados');
+    }
+
+    const response = await fetch(`${API_BASE}/api/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password, userType }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Falha ao renovar o token');
+    }
+
+    const data = await response.json();
+    authService.setAuth(data);
+    return data.token;
+  }
+
   // Handler principal
   async function handleDetect(e: FormEvent) {
     e.preventDefault();
@@ -51,9 +80,38 @@ export default function SolarDetect() {
     const url = `${API_BASE}/api/predict?lat=${latF}&lon=${lonF}`;
 
     try {
-      const res = await fetch(url);
+      // Pega o token do authService
+      let token = authService.getToken();
 
-      if (!res.ok) throw new Error(`Erro HTTP ${res.status}`);
+      // Se o token estiver próximo de expirar, tenta renovar
+      if (token && authService.isTokenNearExpiration(token)) {
+        try {
+          token = await refreshToken();
+        } catch (refreshError) {
+          console.error('Erro ao renovar token:', refreshError);
+          // Redireciona para login se não conseguir renovar
+          window.location.href = '/login';
+          return;
+        }
+      }
+      
+      const res = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          setError("Sessão expirada ou inválida. Por favor, faça login novamente.");
+          // Redirecionar para login após 2 segundos
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 2000);
+          return;
+        }
+        throw new Error(`Erro HTTP ${res.status}`);
+      }
 
       const contentType = res.headers.get("content-type") || "";
 

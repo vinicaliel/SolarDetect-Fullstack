@@ -22,24 +22,36 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import solar_detect.dto.DetectRequest;
+import solar_detect.services.QuotaService;
+import solar_detect.services.UserServices;
+import org.springframework.security.core.context.SecurityContextHolder;
+import solar_detect.models.User;
 
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
 @Tag(name = "Prediction", description = "Solar detection prediction endpoints")
-public class PredictController  {
+public class PredictController {
+    private final QuotaService quotaService;
+    private final UserServices userService;
+
+    public PredictController(QuotaService quotaService, UserServices userService) {
+        this.quotaService = quotaService;
+        this.userService = userService;
+    }
 
     @GetMapping("/predict")
     @Operation(summary = "Get solar prediction", description = "Get solar panel detection prediction for given coordinates")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved prediction image", 
-                content = @Content(mediaType = "image/png"))
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved prediction image", content = @Content(mediaType = "image/png"))
     public ResponseEntity<byte[]> predictGet(
-        @RequestParam Float lat,
-        @RequestParam Float lon
-    ) throws IOException {
+            @RequestParam Float lat,
+            @RequestParam Float lon) throws IOException {
+        // Get current user and check quota
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        quotaService.checkAndUpdateQuota(currentUser, lat, lon);
 
         String url = String.format(Locale.US,
-    "http://fastapi:8000/predict?lat=%.6f&lon=%.6f", lat, lon);
+                "http://fastapi:8000/predict?lat=%.6f&lon=%.6f", lat, lon);
 
         RestTemplate restTemplate = new RestTemplate();
         byte[] imageBytes = restTemplate.getForObject(url, byte[].class);
@@ -52,21 +64,21 @@ public class PredictController  {
 
     @PostMapping("/predict/detect")
     @Operation(summary = "Post solar prediction", description = "Get solar panel detection prediction via POST request")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved prediction image", 
-                content = @Content(mediaType = "image/png"))
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved prediction image", content = @Content(mediaType = "image/png"))
     public ResponseEntity<byte[]> predictPost(@Valid @RequestBody DetectRequest request) {
-        Float lat = request.getLat();
-        Float lon = request.getLon();
-    
-        // Chama o backend Python FastAPI via POST com JSON body
+        // Get current user and check quota
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        quotaService.checkAndUpdateQuota(currentUser, request.getLat(), request.getLon());
+
+        // Call Python FastAPI backend via POST with JSON body
         String pythonUrl = "http://fastapi:8000/predict";
-    
+
         RestTemplate restTemplate = new RestTemplate();
         byte[] response = restTemplate.postForObject(pythonUrl, request, byte[].class);
-    
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_PNG);
-        
+
         return new ResponseEntity<>(response, headers, HttpStatus.OK);
     }
 }
