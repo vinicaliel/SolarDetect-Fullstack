@@ -51,6 +51,13 @@ def overlay_mask(image, mask, color=(255, 0, 255), alpha=0.5):
     mask_bool = mask > 0
     color_layer = np.full_like(img, color, dtype=np.uint8)
     blended = img.copy()
+
+    if not np.any(mask_bool):
+        
+        return img
+     
+
+    
     blended[mask_bool] = cv2.addWeighted(color_layer[mask_bool], alpha,
                                          img[mask_bool], 1 - alpha, 0)
     return blended

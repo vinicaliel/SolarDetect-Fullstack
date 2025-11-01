@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/Button";
+import { authService } from "@/services/authService";
 
 const loginSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -17,9 +18,46 @@ export default function CompanyLoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: LoginForm) => {
+  async function onSubmit(data: LoginForm) {
     console.log("Login Company:", data);
-    // Aqui você chamaria POST /login com { email, password, userType: 'COMPANY' }
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+    const url = `${API_BASE}/api/auth/login`;
+
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...data, userType: 'COMPANY' }),
+      });
+
+      if (!res.ok) {
+        let errText = `Erro HTTP ${res.status}`;
+        try {
+          const errJson = await res.json();
+          errText += ` - ${JSON.stringify(errJson)}`;
+        } catch (_) {
+          // não JSON no corpo
+        }
+        throw new Error(errText);
+      }
+
+      const userData = await res.json();
+      if (userData.userType !== 'COMPANY') {
+        throw new Error("Tipo de usuário inválido para esta página de login.");
+      }
+
+      // Salva o token e tipo de usuário
+      authService.setAuth(userData);
+
+      // Redireciona para a página solardetect
+      window.location.href = '/solardetect';
+
+    } catch (error) {
+      console.error("Erro ao fazer login:", error);
+    }
+
   };
 
   return (

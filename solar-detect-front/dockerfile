@@ -7,8 +7,9 @@ WORKDIR /app
 # Copia os arquivos de dependências
 COPY package*.json ./
 
-# Instala dependências (sem dev, se quiser imagem menor)
+# Instala dependências
 RUN npm install
+RUN npm install js-cookie @types/js-cookie
 
 # Copia o restante dos arquivos do projeto
 COPY . .
@@ -30,6 +31,7 @@ COPY --from=builder /app/public ./public
 
 # Instala apenas dependências de produção
 RUN npm install --omit=dev
+RUN npm install --save js-cookie @types/js-cookie
 
 # Expõe a porta padrão do Next.js
 EXPOSE 3000
