@@ -125,6 +125,7 @@ export default function RegisterPage() {
       }
 
       console.log("Resposta do backend:", json ?? `Status ${res.status}`);
+      window.location.href = '/solardetect';
       // aqui você pode redirecionar ou mostrar uma mensagem de sucesso
 
     } catch (error) {
