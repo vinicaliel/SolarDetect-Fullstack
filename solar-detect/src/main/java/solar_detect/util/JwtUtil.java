@@ -19,6 +19,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -112,4 +113,18 @@ public class JwtUtil {
             return false;
         }
     }
+
+    public String resolveToken(HttpServletRequest request) {
+    String bearerToken = request.getHeader("Authorization");
+    if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+        return bearerToken.substring(7);
+    }
+    return null;
+}
+
+public void validateOrThrow(String token) {
+    if (token == null || !validateToken(token)) {
+        throw new RuntimeException("Token inválido ou expirado.");
+    }
+}
 }

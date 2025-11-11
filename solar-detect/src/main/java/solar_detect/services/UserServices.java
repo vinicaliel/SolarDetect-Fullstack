@@ -6,8 +6,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import solar_detect.dto.RegisterRequest;
+import solar_detect.dto.UserUpdateRequest;
 import solar_detect.exceptions.BusinessException;
 import solar_detect.exceptions.ResourceNotFoundException;
 import solar_detect.models.User;
@@ -51,6 +53,28 @@ public class UserServices implements UserDetailsService{
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado: " + email));
+    }
+
+    @Transactional
+    public User updateUser(User user, UserUpdateRequest request) {
+        if (request.getName() != null && !request.getName().isBlank()) {
+            user.setName(request.getName());
+        }
+        if (request.getPhone() != null && !request.getPhone().isBlank()) {
+            user.setPhone(request.getPhone());
+        }
+        if (request.getAddress() != null && !request.getAddress().isBlank()) {
+            user.setAddress(request.getAddress());
+        }
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new RuntimeException("Usuário não encontrado para exclusão.");
+        }
+        userRepository.deleteById(id);
     }
     
 }

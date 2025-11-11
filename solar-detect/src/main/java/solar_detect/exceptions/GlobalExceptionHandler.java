@@ -123,11 +123,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<?> handleRuntimeException(RuntimeException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("erro", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
-        // Log da exceção para debug
         ex.printStackTrace();
-        
+
         ErrorResponse errorResponse = new ErrorResponse(
             "Erro interno do servidor",
             "Ocorreu um erro inesperado. Tente novamente mais tarde.",
