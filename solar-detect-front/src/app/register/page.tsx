@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/Button";
 import { IMaskInput } from "react-imask";
 import { isValidCPF, isValidCNPJ, isValidPhone } from "@/utils/validators";
+import { authService } from "@/services/authService";
 
 // Schemas separados para cada tipo de usuário
 const studentSchema = z.object({
@@ -125,8 +126,15 @@ export default function RegisterPage() {
       }
 
       console.log("Resposta do backend:", json ?? `Status ${res.status}`);
-      window.location.href = '/solardetect';
-      // aqui você pode redirecionar ou mostrar uma mensagem de sucesso
+      
+      // Se o backend retornou um token, salva e redireciona para o perfil
+      if (json && json.token) {
+        authService.setAuth(json);
+        window.location.href = '/user';
+      } else {
+        // Caso contrário, redireciona para login
+        window.location.href = '/login';
+      }
 
     } catch (error) {
       console.error("Erro ao registrar:", error);

@@ -51,8 +51,8 @@ export default function CompanyLoginPage() {
       // Salva o token e tipo de usuário
       authService.setAuth(userData);
 
-      // Redireciona para a página solardetect
-      window.location.href = '/solardetect';
+      // Redireciona para a página de perfil
+      window.location.href = '/user';
 
     } catch (error) {
       console.error("Erro ao fazer login:", error);

@@ -73,4 +73,21 @@ public class QuotaService {
     private int getQuotaForRole(String role) {
         return role.equals(ROLE_STUDENT) ? STUDENT_QUOTA : COMPANY_QUOTA;
     }
+    
+    public RequestQuota getQuota(User user) {
+        RequestQuota quota = quotaRepository.findByUser(user)
+                .orElseGet(() -> createInitialQuota(user));
+        
+        LocalDateTime now = LocalDateTime.now();
+        if (ChronoUnit.MINUTES.between(quota.getLastResetTime(), now) >= RESET_MINUTES) {
+            resetQuota(quota, getUserRole(user));
+            quotaRepository.save(quota);
+        }
+        
+        return quota;
+    }
+    
+    public int getTotalQuotaForUser(User user) {
+        return getQuotaForRole(getUserRole(user));
+    }
 }
