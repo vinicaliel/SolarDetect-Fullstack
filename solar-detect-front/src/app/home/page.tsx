@@ -6,7 +6,6 @@ import { HeroSection } from "@/components/HeroSection";
 import { CardFeature } from "@/components/CardFeature";
 import { Footer } from "@/components/Footer";
 import { Zap, Shield, TrendingUp, BarChart2 } from "lucide-react";
-import { Button } from "@/components/Button";
 
 export default function HomePage() {
   const router = useRouter();

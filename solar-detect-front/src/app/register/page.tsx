@@ -16,9 +16,7 @@ const studentSchema = z.object({
     .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/, { message: "Nome deve conter apenas letras" }),
   email: z.string()
     .email({ message: "Email inválido" })
-    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, { 
-      message: "Formato de email inválido" 
-    }),
+    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, { message: "Formato de email inválido" }),
   password: z.string()
     .min(6, { message: "Senha deve ter pelo menos 6 caracteres" })
     .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/, {
@@ -26,32 +24,22 @@ const studentSchema = z.object({
     }),
   documentNumber: z.string()
     .min(11, { message: "CPF inválido" })
-    .refine((cpf) => isValidCPF(cpf), {
-      message: "CPF inválido"
-    }),
-  phone: z.string()
-    .optional()
-    .refine((phone) => !phone || isValidPhone(phone), {
-      message: "Telefone deve estar no formato (XX)XXXXX-XXXX"
-    }),
-  address: z.string()
-    .optional()
-    .refine((address) => !address || address.length >= 5, {
-      message: "Endereço deve ter pelo menos 5 caracteres"
-    }),
+    .refine((cpf) => isValidCPF(cpf), { message: "CPF inválido" }),
+  phone: z.string().optional().refine((phone) => !phone || isValidPhone(phone), {
+    message: "Telefone deve estar no formato (XX)XXXXX-XXXX"
+  }),
+  address: z.string().optional().refine((address) => !address || address.length >= 5, {
+    message: "Endereço deve ter pelo menos 5 caracteres"
+  }),
 });
 
 const companySchema = z.object({
   name: z.string()
     .min(2, { message: "Nome deve ter pelo menos 2 caracteres" })
-    .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ0-9\s]+$/, { 
-      message: "Nome deve conter apenas letras e números" 
-    }),
+    .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ0-9\s]+$/, { message: "Nome deve conter apenas letras e números" }),
   email: z.string()
     .email({ message: "Email inválido" })
-    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, { 
-      message: "Formato de email inválido" 
-    }),
+    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, { message: "Formato de email inválido" }),
   password: z.string()
     .min(6, { message: "Senha deve ter pelo menos 6 caracteres" })
     .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/, {
@@ -59,19 +47,13 @@ const companySchema = z.object({
     }),
   documentNumber: z.string()
     .min(14, { message: "CNPJ inválido" })
-    .refine((cnpj) => isValidCNPJ(cnpj), {
-      message: "CNPJ inválido"
-    }),
-  phone: z.string()
-    .optional()
-    .refine((phone) => !phone || isValidPhone(phone), {
-      message: "Telefone deve estar no formato (XX)XXXXX-XXXX"
-    }),
-  address: z.string()
-    .optional()
-    .refine((address) => !address || address.length >= 5, {
-      message: "Endereço deve ter pelo menos 5 caracteres"
-    }),
+    .refine((cnpj) => isValidCNPJ(cnpj), { message: "CNPJ inválido" }),
+  phone: z.string().optional().refine((phone) => !phone || isValidPhone(phone), {
+    message: "Telefone deve estar no formato (XX)XXXXX-XXXX"
+  }),
+  address: z.string().optional().refine((address) => !address || address.length >= 5, {
+    message: "Endereço deve ter pelo menos 5 caracteres"
+  }),
 });
 
 type StudentForm = z.infer<typeof studentSchema>;
@@ -99,58 +81,48 @@ export default function RegisterPage() {
     try {
       const res = await fetch(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
-        // tenta ler o corpo de erro (se existir)
         let errText = `Erro HTTP ${res.status}`;
         try {
           const errJson = await res.json();
           errText += ` - ${JSON.stringify(errJson)}`;
-        } catch (_) {
-          // não JSON no corpo
-        }
+        } catch (_) {}
         throw new Error(errText);
       }
 
-      // se o backend retornar JSON
-      let json = null;
-      try {
-        json = await res.json();
-      } catch (_) {
-        // resposta vazia ou não-JSON
-      }
-
+      const json = await res.json().catch(() => null);
       console.log("Resposta do backend:", json ?? `Status ${res.status}`);
-      
-      // Se o backend retornou um token, salva e redireciona para o perfil
+
       if (json && json.token) {
         authService.setAuth(json);
         window.location.href = '/user';
       } else {
-        // Caso contrário, redireciona para login
         window.location.href = '/login';
       }
-
     } catch (error) {
       console.error("Erro ao registrar:", error);
-      // mostrar feedback ao usuário se quiser
     }
-
   }
-;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
+    <div
+      className="min-h-screen flex items-center justify-center bg-cover bg-center relative"
+      style={{ backgroundImage: "url('/register.webp')" }}
+    >
+      {/* Camada de escurecimento e blur */}
+      <div className="absolute inset-0 bg-black/25 backdrop-blur-sm"></div>
+
+      {/* Card principal */}
+      <div className="relative z-10 max-w-md w-full bg-white/90 rounded-2xl shadow-2xl p-8 backdrop-blur-md">
         <h2 className="text-2xl font-bold mb-6 text-center text-green-700">
           Cadastro
         </h2>
 
+        {/* Botões de alternância */}
         <div className="flex justify-center mb-6 gap-4">
           <button
             type="button"
@@ -176,10 +148,11 @@ export default function RegisterPage() {
           </button>
         </div>
 
+        {/* Formulário */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Nome */}
           <div>
-            <label className="block text-gray-700">Nome</label>
+            <label className="block text-gray-700 font-medium">Nome</label>
             <input
               {...register("name")}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-700"
@@ -189,7 +162,7 @@ export default function RegisterPage() {
 
           {/* Email */}
           <div>
-            <label className="block text-gray-700">Email</label>
+            <label className="block text-gray-700 font-medium">Email</label>
             <input
               {...register("email")}
               type="email"
@@ -200,7 +173,7 @@ export default function RegisterPage() {
 
           {/* Senha */}
           <div>
-            <label className="block text-gray-700">Senha</label>
+            <label className="block text-gray-700 font-medium">Senha</label>
             <input
               {...register("password")}
               type="password"
@@ -211,7 +184,7 @@ export default function RegisterPage() {
 
           {/* CPF / CNPJ */}
           <div>
-            <label className="block text-gray-700">
+            <label className="block text-gray-700 font-medium">
               {userType === "STUDENT" ? "CPF" : "CNPJ"}
             </label>
             <Controller
@@ -234,7 +207,7 @@ export default function RegisterPage() {
 
           {/* Telefone */}
           <div>
-            <label className="block text-gray-700">Telefone (opcional)</label>
+            <label className="block text-gray-700 font-medium">Telefone (opcional)</label>
             <Controller
               name="phone"
               control={control}
@@ -252,7 +225,7 @@ export default function RegisterPage() {
 
           {/* Endereço */}
           <div>
-            <label className="block text-gray-700">Endereço (opcional)</label>
+            <label className="block text-gray-700 font-medium">Endereço (opcional)</label>
             <input
               {...register("address")}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-700"

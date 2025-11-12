@@ -14,7 +14,11 @@ const loginSchema = z.object({
 type LoginForm = z.infer<typeof loginSchema>;
 
 export default function CompanyLoginPage() {
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
   });
 
@@ -29,7 +33,7 @@ export default function CompanyLoginPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...data, userType: 'COMPANY' }),
+        body: JSON.stringify({ ...data, userType: "COMPANY" }),
       });
 
       if (!res.ok) {
@@ -37,59 +41,89 @@ export default function CompanyLoginPage() {
         try {
           const errJson = await res.json();
           errText += ` - ${JSON.stringify(errJson)}`;
-        } catch (_) {
-          // não JSON no corpo
+        } catch {
+          /* corpo não JSON */
         }
         throw new Error(errText);
       }
 
       const userData = await res.json();
-      if (userData.userType !== 'COMPANY') {
+      if (userData.userType !== "COMPANY") {
         throw new Error("Tipo de usuário inválido para esta página de login.");
       }
 
-      // Salva o token e tipo de usuário
       authService.setAuth(userData);
-
-      // Redireciona para a página de perfil
-      window.location.href = '/user';
-
+      window.location.href = "/user";
     } catch (error) {
       console.error("Erro ao fazer login:", error);
     }
-
-  };
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
-        <h2 className="text-2xl font-bold mb-6 text-center text-green-700">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Fundo com imagem da empresa */}
+      <div
+        className="absolute inset-0 bg-cover bg-center transition-all duration-700"
+        style={{
+          backgroundImage: "url('/company.jpg')",
+          filter: "blur(4px) brightness(0.85)",
+        }}
+      ></div>
+
+      {/* Overlay com gradiente para suavizar */}
+      <div className="absolute inset-0 bg-gradient-to-b from-green-900/60 via-green-800/40 to-green-900/70"></div>
+
+      {/* Card de login */}
+      <div className="relative z-10 max-w-md w-full bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-green-200/60">
+        <h2 className="text-3xl font-bold mb-6 text-center text-green-800 drop-shadow-sm">
           Login Empresa
         </h2>
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label className="block text-gray-700">Email</label>
+            <label className="block text-gray-700 font-medium mb-1">
+              Email
+            </label>
             <input
               {...register("email")}
               type="email"
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-700"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-700 bg-white/90"
             />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.email.message}
+              </p>
+            )}
           </div>
+
           <div>
-            <label className="block text-gray-700">Senha</label>
+            <label className="block text-gray-700 font-medium mb-1">
+              Senha
+            </label>
             <input
               {...register("password")}
               type="password"
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-700"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-700 bg-white/90"
             />
-            {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.password.message}
+              </p>
+            )}
           </div>
-          <Button type="submit" size="lg" className="w-full mt-4">
+
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full mt-4 bg-green-600 hover:bg-green-700 transition-all duration-300 shadow-md"
+          >
             Entrar
           </Button>
         </form>
       </div>
+
+      {/* Vinheta sutil para foco no centro */}
+      <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-black/40 pointer-events-none" />
     </div>
   );
 }

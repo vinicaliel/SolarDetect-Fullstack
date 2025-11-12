@@ -13,7 +13,6 @@ export function Navbar() {
         <div className="hidden md:flex space-x-6 items-center">
           <a href="#home" className="hover:text-green-700 transition-colors duration-300">Home</a>
           <a href="#cards" className="hover:text-green-700 transition-colors duration-300">Funcionalidades</a>
-          <a href="#contact" className="hover:text-green-700 transition-colors duration-300">Contato</a>
 
           {/* Botões de Login e Cadastro */}
           <Button variant="outline" size="sm" onClick={() => router.push("/login")}>
