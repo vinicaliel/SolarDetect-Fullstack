@@ -29,7 +29,7 @@ export default function StudentLoginPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...data, userType: 'STUDENT' }),
+        body: JSON.stringify({ ...data, userType: "STUDENT" }),
       });
 
       if (!res.ok) {
@@ -37,58 +37,61 @@ export default function StudentLoginPage() {
         try {
           const errJson = await res.json();
           errText += ` - ${JSON.stringify(errJson)}`;
-        } catch (_) {
-          // não JSON no corpo
-        }
+        } catch (_) {}
         throw new Error(errText);
       }
 
       const userData = await res.json();
-      if (userData.userType !== 'STUDENT') {
+      if (userData.userType !== "STUDENT") {
         throw new Error("Tipo de usuário inválido para esta página de login.");
       }
 
-      // Salva o token e tipo de usuário
       authService.setAuth(userData);
-
-      // Redireciona para a página solardetect
-      window.location.href = '/solardetect';
-
+      window.location.href = "/user";
     } catch (error) {
       console.error("Erro ao fazer login:", error);
     }
-
-
-    
-    
-
-  };
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
-        <h2 className="text-2xl font-bold mb-6 text-center text-green-700">
+    <div
+      className="min-h-screen flex items-center justify-center bg-cover bg-center relative"
+      style={{ backgroundImage: "url('/student.jpg')" }}
+    >
+      {/* Camada de escurecimento suave */}
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+
+      {/* Card de login */}
+      <div className="relative z-10 max-w-md w-full bg-white/90 rounded-2xl shadow-2xl p-8 backdrop-blur-md">
+        <h2 className="text-2xl font-bold mb-6 text-center text-green-700 drop-shadow-sm">
           Login Estudante
         </h2>
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label className="block text-gray-700">Email</label>
+            <label className="block text-gray-700 font-medium">Email</label>
             <input
               {...register("email")}
               type="email"
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-700"
             />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
+            )}
           </div>
+
           <div>
-            <label className="block text-gray-700">Senha</label>
+            <label className="block text-gray-700 font-medium">Senha</label>
             <input
               {...register("password")}
               type="password"
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-700"
             />
-            {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="text-red-500 text-sm">{errors.password.message}</p>
+            )}
           </div>
+
           <Button type="submit" size="lg" className="w-full mt-4">
             Entrar
           </Button>
