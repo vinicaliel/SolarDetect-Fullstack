@@ -29,4 +29,4 @@ venv.bak/
 Thumbs.db
 
 mlruns
-fastApi/vgg16_LR.pth
+fastApi/vgg19.pth

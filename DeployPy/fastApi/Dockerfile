@@ -10,7 +10,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Garante que o modelo está no mesmo diretório do main.py
-COPY vgg16_LR.pth /app/vgg16_LR.pth
+COPY vgg19.pth /app/vgg19.pth
 
 # Expõe a porta do FastAPI
 EXPOSE 8000

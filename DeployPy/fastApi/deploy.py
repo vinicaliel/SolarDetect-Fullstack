@@ -145,7 +145,7 @@ class UNetVGG16(nn.Module):
 # --- 2️ Carregar pesos ---
 print("iniciando o modelo")
 model = UNetVGG16(pretrained=True)
-state = torch.load(r"./vgg16_LR.pth", map_location="cpu")
+state = torch.load(r"./vgg19.pth", map_location="cpu")
 print("modelo carregado")
 model.load_state_dict(state)
 model.eval()
@@ -155,9 +155,9 @@ print("iniciando o mlflow")
 # --- 3️ Registrar no MLflow ---
 mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "http://mlflow:5000"))
 print("mlflow setado")
-mlflow.set_experiment("Segmentação de Imagens - U-Net VGG16")
+mlflow.set_experiment("Segmentação de Imagens - U-Net VGG19")
 print("experiment setado")
-with mlflow.start_run(run_name="Segmentação de Imagens - U-Net VGG16"):
+with mlflow.start_run(run_name="Segmentação de Imagens - U-Net VGG19"):
     mlflow.pytorch.log_model(
         model,
         "model",
