@@ -5,6 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/Button";
 import { authService } from "@/services/authService";
+import { toast } from "sonner";
 
 const loginSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -37,7 +38,7 @@ export default function StudentLoginPage() {
         try {
           const errJson = await res.json();
           errText += ` - ${JSON.stringify(errJson)}`;
-        } catch (_) {}
+        } catch (_) { }
         throw new Error(errText);
       }
 
@@ -48,8 +49,9 @@ export default function StudentLoginPage() {
 
       authService.setAuth(userData);
       window.location.href = "/user";
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao fazer login:", error);
+      toast.error("Ocorreu um erro ao tentar fazer login.");
     }
   }
 
@@ -67,7 +69,7 @@ export default function StudentLoginPage() {
           Login Estudante
         </h2>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit, () => toast.error("Por favor, verifique os campos destacados."))} className="space-y-4">
           <div>
             <label className="block text-gray-700 font-medium">Email</label>
             <input

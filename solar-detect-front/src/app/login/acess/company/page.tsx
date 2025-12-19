@@ -5,6 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/Button";
 import { authService } from "@/services/authService";
+import { toast } from "sonner";
 
 const loginSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -54,8 +55,9 @@ export default function CompanyLoginPage() {
 
       authService.setAuth(userData);
       window.location.href = "/user";
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao fazer login:", error);
+      toast.error("Ocorreu um erro ao tentar fazer login.");
     }
   }
 
@@ -79,7 +81,7 @@ export default function CompanyLoginPage() {
           Login Empresa
         </h2>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit, () => toast.error("Por favor, verifique os campos destacados."))} className="space-y-4">
           <div>
             <label className="block text-gray-700 font-medium mb-1">
               Email

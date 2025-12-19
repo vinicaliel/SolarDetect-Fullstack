@@ -8,6 +8,7 @@ import { Button } from "@/components/Button";
 import { IMaskInput } from "react-imask";
 import { isValidCPF, isValidCNPJ, isValidPhone } from "@/utils/validators";
 import { authService } from "@/services/authService";
+import { toast } from "sonner";
 
 // Schemas separados para cada tipo de usuário
 const studentSchema = z.object({
@@ -90,7 +91,7 @@ export default function RegisterPage() {
         try {
           const errJson = await res.json();
           errText += ` - ${JSON.stringify(errJson)}`;
-        } catch (_) {}
+        } catch (_) { }
         throw new Error(errText);
       }
 
@@ -103,8 +104,9 @@ export default function RegisterPage() {
       } else {
         window.location.href = '/login';
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao registrar:", error);
+      toast.error(error.message || "Ocorreu um erro ao tentar se registrar.");
     }
   }
 
@@ -126,22 +128,20 @@ export default function RegisterPage() {
         <div className="flex justify-center mb-6 gap-4">
           <button
             type="button"
-            className={`px-4 py-2 rounded-full font-semibold transition ${
-              userType === "STUDENT"
+            className={`px-4 py-2 rounded-full font-semibold transition ${userType === "STUDENT"
                 ? "bg-green-700 text-white"
                 : "bg-gray-200 text-gray-700"
-            }`}
+              }`}
             onClick={() => setUserType("STUDENT")}
           >
             Estudante
           </button>
           <button
             type="button"
-            className={`px-4 py-2 rounded-full font-semibold transition ${
-              userType === "COMPANY"
+            className={`px-4 py-2 rounded-full font-semibold transition ${userType === "COMPANY"
                 ? "bg-green-700 text-white"
                 : "bg-gray-200 text-gray-700"
-            }`}
+              }`}
             onClick={() => setUserType("COMPANY")}
           >
             Empresa
@@ -149,7 +149,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Formulário */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit, () => toast.error("Por favor, verifique os campos destacados."))} className="space-y-4">
           {/* Nome */}
           <div>
             <label className="block text-gray-700 font-medium">Nome</label>
