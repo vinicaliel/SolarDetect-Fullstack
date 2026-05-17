@@ -139,10 +139,18 @@ export default function SolarDetect() {
     const imageData = ctx.getImageData(0, 0, bitmap.width, bitmap.height).data;
 
     let count = 0;
-    for (let i = 0; i < imageData.length; i += 400) {
+    // i += 4 para checar todos os pixels. (Antes estava pulando 100 pixels por vez)
+    for (let i = 0; i < imageData.length; i += 4) {
       const r = imageData[i], g = imageData[i+1], b = imageData[i+2];
-      if (r > 140 && b > 140 && g < 120) count++;
-      if (count > 8) return true;
+      
+      // O backend usa (255, 0, 255) com alpha de 0.5. Isso resulta num tom
+      // onde Red e Blue ficam acima de 120 e Green fica baixo.
+      if (r > 120 && b > 120 && g < 110) {
+        count++;
+      }
+      
+      // Se achar 20 pixels com essa cor (uma área bem pequena), já considera detectado
+      if (count > 20) return true;
     }
     return false;
   }
